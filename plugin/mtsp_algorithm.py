@@ -30,8 +30,7 @@ __copyright__ = '(C) 2022 by Борис Карпов'
 
 __revision__ = '$Format:%H$'
 
-from qgis.core import (QgsFeatureSink, QgsProcessing, QgsProcessingAlgorithm, QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource)
+from qgis.core import (QgsFeatureSink, QgsProcessing, QgsProcessingAlgorithm, QgsProcessingParameterFeatureSource, QgsProcessingParameterNumber)
 from qgis.PyQt.QtCore import QCoreApplication
 
 
@@ -53,8 +52,9 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
-    OUTPUT = 'OUTPUT'
-    INPUT = 'INPUT'
+    DEST_LAYER = "DEST_LAYER"
+    ROADS_LAYER = "ROADS_LAYER"
+    NUMBER_OF_ROUTES = "NUMBER_OF_ROUTES"
 
     def initAlgorithm(self, config):
         """
@@ -66,19 +66,25 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         # geometry.
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.DEST_LAYER,
+                self.tr("Destinations"),
+                [QgsProcessing.TypeVectorPoint]
             )
         )
 
-        # We add a feature sink in which to store our processed features (this
-        # usually takes the form of a newly created vector layer when the
-        # algorithm is run in QGIS).
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr('Output layer')
+            QgsProcessingParameterFeatureSource(
+                self.ROADS_LAYER,
+                self.tr("Roads"),
+                [QgsProcessing.TypeVectorLine]
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.NUMBER_OF_ROUTES,
+                self.tr("Number of routes"),
+                minValue=1,
             )
         )
 
