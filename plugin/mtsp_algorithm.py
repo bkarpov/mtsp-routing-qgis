@@ -132,7 +132,7 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'Построить маршруты'
+        return "Build routes"
 
     def displayName(self):
         """
@@ -156,7 +156,7 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'Маршрутизация'
+        return "Routing"
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
