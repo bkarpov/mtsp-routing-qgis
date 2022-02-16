@@ -163,3 +163,14 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return MtspSolverAlgorithm()
+
+    def shortHelpString(self):
+        return self.tr("""
+        Solve the multiple traveling salesman problem (MTSP).
+        Divide the points into clusters of the same size and build routes in them.
+
+        Parameters:
+            Destinations: Layer with destinations. All points must be reachable by roads.
+            Roads: Layer with roads. It's strongly recommended to divide roads by roads before running the algorithm.
+            Number of routes: Number of routes to build.
+        """)
