@@ -29,11 +29,14 @@ __copyright__ = '(C) 2022 by Boris Karpov'
 
 __revision__ = '$Format:%H$'
 
-from qgis.core import (QgsFeatureSink, QgsProcessing, QgsProcessingAlgorithm, QgsProcessingParameterFeatureSource, QgsProcessingParameterNumber)
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis import core
+from qgis.PyQt import QtCore
+
+from routing import _solution as sl
+from routing import _spatial_objects as sp
 
 
-class MtspSolverAlgorithm(QgsProcessingAlgorithm):
+class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
     """
     This is an example algorithm that takes a vector layer and
     creates a new identical one.
@@ -54,6 +57,7 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
     DEST_LAYER = "DEST_LAYER"
     ROADS_LAYER = "ROADS_LAYER"
     NUMBER_OF_ROUTES = "NUMBER_OF_ROUTES"
+    RESULT = "RESULT"
 
     def initAlgorithm(self, config):
         """
@@ -64,23 +68,23 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         # We add the input vector features source. It can have any kind of
         # geometry.
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            core.QgsProcessingParameterFeatureSource(
                 self.DEST_LAYER,
                 self.tr("Destinations"),
-                [QgsProcessing.TypeVectorPoint]
+                [core.QgsProcessing.TypeVectorPoint]
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            core.QgsProcessingParameterFeatureSource(
                 self.ROADS_LAYER,
                 self.tr("Roads"),
-                [QgsProcessing.TypeVectorLine]
+                [core.QgsProcessing.TypeVectorLine]
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterNumber(
+            core.QgsProcessingParameterNumber(
                 self.NUMBER_OF_ROUTES,
                 self.tr("Number of routes"),
                 minValue=1,
@@ -158,7 +162,7 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         return "Routing"
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QtCore.QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
         return MtspSolverAlgorithm()
