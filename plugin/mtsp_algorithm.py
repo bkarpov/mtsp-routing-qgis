@@ -151,12 +151,12 @@ class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
             core.QgsField("number_in_route", QtCore.QVariant.Int)  # Порядковый номер внутри маршрута
         ]
 
-        clustered_destinations_layer = core.QgsVectorLayer("Point", self.tr("Ordered destinations"), "memory")
+        clustered_destinations_layer = core.QgsVectorLayer("Point", "destinations", "memory")
         clustered_destinations_data = clustered_destinations_layer.dataProvider()
         clustered_destinations_data.addAttributes(destinations_layer.dataProvider().fields().toList() + res_atts)
         clustered_destinations_layer.updateFields()
 
-        routes_layer = core.QgsVectorLayer("LineString", self.tr("Routes"), "memory")
+        routes_layer = core.QgsVectorLayer("LineString", "routes", "memory")
         routes_layer_data = routes_layer.dataProvider()
         routes_layer_data.addAttributes(roads_layer.dataProvider().fields().toList() + res_atts)
         routes_layer.updateFields()
