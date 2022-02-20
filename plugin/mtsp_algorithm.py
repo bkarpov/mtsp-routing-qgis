@@ -37,7 +37,7 @@ from routing import solution as sl
 from routing import spatial_objects as sp
 
 
-class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
+class MtspRouting(core.QgsProcessingAlgorithm):
     """
     This is an example algorithm that takes a vector layer and
     creates a new identical one.
@@ -230,7 +230,7 @@ class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
         return QtCore.QCoreApplication.translate(self.__class__.__name__, string)
 
     def createInstance(self):
-        return MtspSolverAlgorithm()
+        return MtspRouting()
 
     def shortHelpString(self):
         return self.tr("""

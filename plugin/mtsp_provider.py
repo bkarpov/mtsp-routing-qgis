@@ -31,11 +31,10 @@ __revision__ = '$Format:%H$'
 
 from qgis.core import QgsProcessingProvider
 
-from .mtsp_algorithm import MtspSolverAlgorithm
+from .mtsp_algorithm import MtspRouting
 
 
-class MtspSolverProvider(QgsProcessingProvider):
-
+class MtspRoutingProvider(QgsProcessingProvider):
     def __init__(self):
         """
         Default constructor.
@@ -53,7 +52,7 @@ class MtspSolverProvider(QgsProcessingProvider):
         """
         Loads all algorithms belonging to this provider.
         """
-        self.addAlgorithm(MtspSolverAlgorithm())
+        self.addAlgorithm(MtspRouting())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
@@ -63,7 +62,7 @@ class MtspSolverProvider(QgsProcessingProvider):
         string should be a unique, short, character only string, eg "qgis" or
         "gdal". This string should not be localised.
         """
-        return 'MTSP Routing'
+        return 'MtspRouting'
 
     def name(self):
         """
@@ -72,7 +71,7 @@ class MtspSolverProvider(QgsProcessingProvider):
 
         This string should be short (e.g. "Lastools") and localised.
         """
-        return self.tr('MTSP Routing')
+        return 'MTSP Routing'
 
     def icon(self):
         """
