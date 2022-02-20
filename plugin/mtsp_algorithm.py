@@ -200,7 +200,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "Build routes"
+        return "build routes"
 
     def displayName(self):
         """
@@ -224,7 +224,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "Routing"
+        return "routing"
 
     def tr(self, string):
         return QtCore.QCoreApplication.translate(self.__class__.__name__, string)
