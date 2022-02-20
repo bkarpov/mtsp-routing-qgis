@@ -29,6 +29,8 @@ __copyright__ = '(C) 2022 by Boris Karpov'
 
 __revision__ = '$Format:%H$'
 
+import os
+
 from qgis import core
 from qgis.PyQt import QtCore
 from routing import solution as sl
@@ -57,6 +59,20 @@ class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
     ROADS_LAYER = "ROADS_LAYER"
     NUMBER_OF_ROUTES = "NUMBER_OF_ROUTES"
     RESULT = "RESULT"
+
+    def __init__(self):
+        super(MtspRouting, self).__init__()
+
+        locale_path = os.path.join(
+            os.path.dirname(__file__),
+            "i18n",
+            f"{os.path.splitext(os.path.basename(__file__))[0]}_{QtCore.QSettings().value('locale/userLocale')[:2]}.qm"
+        )
+
+        if os.path.exists(locale_path):
+            self.translator = QtCore.QTranslator()
+            self.translator.load(locale_path)
+            QtCore.QCoreApplication.installTranslator(self.translator)
 
     def initAlgorithm(self, config):
         """
