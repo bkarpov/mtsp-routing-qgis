@@ -93,7 +93,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
         self.addParameter(
             core.QgsProcessingParameterFeatureSource(
                 self.ROADS_LAYER,
-                self.tr("Roads"),
+                self.tr("Road network"),
                 [core.QgsProcessing.TypeVectorLine]
             )
         )
@@ -239,6 +239,6 @@ class MtspRouting(core.QgsProcessingAlgorithm):
 
         Parameters:
             Destinations: Layer with destinations. All points must be reachable by roads.
-            Roads: Layer with roads. It's strongly recommended to divide roads by roads before running the algorithm.
+            Road network: Layer with roads.
             Number of routes: Number of routes to build.
         """)
