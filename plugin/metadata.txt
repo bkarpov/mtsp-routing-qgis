@@ -5,12 +5,12 @@
 [general]
 name=MTSP Routing
 qgisMinimumVersion=3.0
-description=Решить multiple traveling salesman problem (MTSP).
-version=0
-author=Борис Карпов
+description=Solve the multiple traveling salesman problem (MTSP).
+version=0.0.1
+author=Boris Karpov
 email=bkarpov96@ya.ru
 
-about=Разделить точки на кластеры и построить маршруты.
+about=Divide the points into clusters of the same size and build routes in them.
 
 tracker=https://github.com/bkarpov/mtsp-routing-qgis/issues
 repository=https://github.com/bkarpov/mtsp-routing-qgis
