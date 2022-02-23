@@ -29,11 +29,13 @@ __copyright__ = '(C) 2022 by Boris Karpov'
 
 __revision__ = '$Format:%H$'
 
-from qgis.core import (QgsFeatureSink, QgsProcessing, QgsProcessingAlgorithm, QgsProcessingParameterFeatureSource, QgsProcessingParameterNumber)
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis import core
+from qgis.PyQt import QtCore
+from routing import solution as sl
+from routing import spatial_objects as sp
 
 
-class MtspSolverAlgorithm(QgsProcessingAlgorithm):
+class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
     """
     This is an example algorithm that takes a vector layer and
     creates a new identical one.
@@ -54,6 +56,7 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
     DEST_LAYER = "DEST_LAYER"
     ROADS_LAYER = "ROADS_LAYER"
     NUMBER_OF_ROUTES = "NUMBER_OF_ROUTES"
+    RESULT = "RESULT"
 
     def initAlgorithm(self, config):
         """
@@ -64,23 +67,23 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         # We add the input vector features source. It can have any kind of
         # geometry.
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            core.QgsProcessingParameterFeatureSource(
                 self.DEST_LAYER,
                 self.tr("Destinations"),
-                [QgsProcessing.TypeVectorPoint]
+                [core.QgsProcessing.TypeVectorPoint]
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            core.QgsProcessingParameterFeatureSource(
                 self.ROADS_LAYER,
                 self.tr("Roads"),
-                [QgsProcessing.TypeVectorLine]
+                [core.QgsProcessing.TypeVectorLine]
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterNumber(
+            core.QgsProcessingParameterNumber(
                 self.NUMBER_OF_ROUTES,
                 self.tr("Number of routes"),
                 minValue=1,
@@ -92,36 +95,86 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
 
-        # Retrieve the feature source and sink. The 'dest_id' variable is used
-        # to uniquely identify the feature sink, and must be included in the
-        # dictionary returned by the processAlgorithm function.
-        source = self.parameterAsSource(parameters, self.INPUT, context)
-        (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,
-                context, source.fields(), source.wkbType(), source.sourceCrs())
+        # Получить данные, выбранные пользователем
+        destinations_layer = self.parameterAsLayer(parameters, self.DEST_LAYER, context)
+        roads_layer = self.parameterAsLayer(parameters, self.ROADS_LAYER, context)
+        number_of_routes = self.parameterAsInt(parameters, self.NUMBER_OF_ROUTES, context)
 
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
-        total = 100.0 / source.featureCount() if source.featureCount() else 0
-        features = source.getFeatures()
+        # Преобразовать данные для использования в алгоритмах mtsp-routing-core
+        points = []
 
-        for current, feature in enumerate(features):
-            # Stop the algorithm if cancel button has been clicked
-            if feedback.isCanceled():
-                break
+        qgis_objects_attributes = {}  # Атрибуты исходных объектов
+        # Атрибуты вынесены в словарь, тк они содержат Qgis объекты, несовместимые с multiprocessing
 
-            # Add a feature in the sink
-            sink.addFeature(feature, QgsFeatureSink.FastInsert)
+        for feature in destinations_layer.getFeatures():
+            geom = feature.geometry().asPoint()
+            point = sp.Point(geom[0], geom[1])
+            qgis_objects_attributes[point] = feature.attributes()
+            points.append(point)
 
-            # Update the progress bar
-            feedback.setProgress(int(current * total))
+        graph = sp.Graph()
 
-        # Return the results of the algorithm. In this case our only result is
-        # the feature sink which contains the processed features, but some
-        # algorithms may return multiple feature sinks, calculated numeric
-        # statistics, etc. These should all be included in the returned
-        # dictionary, with keys matching the feature corresponding parameter
-        # or output names.
-        return {self.OUTPUT: dest_id}
+        for feature in roads_layer.getFeatures():
+            geom = feature.geometry().asPolyline()
+
+            for i in range(len(geom) - 1):  # Если отрезок состоит из 3 и более точек, то он добавляется по частям
+                edge = sp.Segment(
+                    sp.Point(geom[i][0], geom[i][1]),
+                    sp.Point(geom[i + 1][0], geom[i + 1][1]),
+                )
+
+                qgis_objects_attributes[edge] = feature.attributes()
+                graph.add_edge(edge)
+
+        # Подсчитать результат
+        results = sl.build_routes(points, number_of_routes, graph)
+
+        # Создать новые слои с дополнительными атрибутами
+        res_atts = [
+            core.QgsField("route_id", QtCore.QVariant.Int),  # Номер маршрута
+            core.QgsField("number_in_route", QtCore.QVariant.Int)  # Порядковый номер внутри маршрута
+        ]
+
+        clustered_destinations_layer = core.QgsVectorLayer("Point", self.tr("Ordered destinations"), "memory")
+        clustered_destinations_data = clustered_destinations_layer.dataProvider()
+        clustered_destinations_data.addAttributes(destinations_layer.dataProvider().fields().toList() + res_atts)
+        clustered_destinations_layer.updateFields()
+
+        routes_layer = core.QgsVectorLayer("LineString", self.tr("Routes"), "memory")
+        routes_layer_data = routes_layer.dataProvider()
+        routes_layer_data.addAttributes(roads_layer.dataProvider().fields().toList() + res_atts)
+        routes_layer.updateFields()
+
+        # Создать объекты на новых слоях
+        for cluster_idx, result in enumerate(results):
+            cluster, route = result
+
+            for point_idx, point in enumerate(cluster):
+                new_feature = core.QgsFeature()
+                new_feature.setGeometry(core.QgsGeometry.fromPointXY(core.QgsPointXY(point.x, point.y)))
+                new_feature.setAttributes(qgis_objects_attributes[point] + [cluster_idx + 1, point_idx + 1])
+                clustered_destinations_data.addFeature(new_feature)
+
+            for edge_idx, edge in enumerate(route):
+                new_feature = core.QgsFeature()
+                new_feature.setGeometry(
+                    core.QgsGeometry.fromPolyline(
+                        [core.QgsPoint(point.x, point.y) for point in (edge.start, edge.finish)]
+                    )
+                )
+                new_feature.setAttributes(qgis_objects_attributes[edge] + [cluster_idx + 1, edge_idx + 1])
+                routes_layer_data.addFeature(new_feature)
+
+        # Добавить слои в проект
+        layer_details = core.QgsProcessingContext.LayerDetails("", core.QgsProject.instance(), "")
+
+        context.temporaryLayerStore().addMapLayers([clustered_destinations_layer, routes_layer])
+        context.setLayersToLoadOnCompletion({
+            clustered_destinations_layer.id(): layer_details,
+            routes_layer.id(): layer_details,
+        })
+
+        return {self.RESULT: (clustered_destinations_layer, routes_layer)}
 
     def name(self):
         """
@@ -158,7 +211,7 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         return "Routing"
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QtCore.QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
         return MtspSolverAlgorithm()
