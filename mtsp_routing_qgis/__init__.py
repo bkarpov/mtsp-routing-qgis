@@ -8,7 +8,7 @@ __copyright__ = '(C) 2022 by Boris Karpov'
 
 from qgis import gui
 
-from plugin.mtsp import MtspRoutingPlugin
+from mtsp_routing_qgis.mtsp import MtspRoutingPlugin
 
 
 # noinspection PyPep8Naming

@@ -4,7 +4,7 @@
 from PyQt5 import QtGui
 from qgis import core
 
-from plugin.mtsp_algorithm import MtspRouting
+from mtsp_routing_qgis.mtsp_algorithm import MtspRouting
 
 __author__ = "Boris Karpov"
 __date__ = "2022-02-16"
