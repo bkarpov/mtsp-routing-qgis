@@ -10,7 +10,7 @@ version=1.0.0
 author=Boris Karpov
 email=bkarpov96@ya.ru
 
-about=Divide the points into clusters of the same size and build routes in them.
+about=Divide the points into clusters of the same size and build routes in them. Installation of the Python package "mtsp-routing" is required.
 
 tracker=https://github.com/bkarpov/mtsp-routing-qgis/issues
 repository=https://github.com/bkarpov/mtsp-routing-qgis
@@ -23,7 +23,7 @@ hasProcessingProvider=yes
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=python
+tags=routing,navigation,street network,processing,vector,openstreetmap,osm,python,qgis3
 
 homepage=https://github.com/bkarpov/mtsp-routing-qgis
 category=Analysis
