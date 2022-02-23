@@ -38,6 +38,8 @@
             Destinations: Layer with destinations. All points must be reachable by roads.
             Road network: Layer with roads.
             Number of routes: Number of routes to build.
+            
+        &lt;a href=&quot;https://github.com/bkarpov/mtsp-routing-qgis/blob/main/README.md&quot;&gt;Manual&lt;/a&gt;
         </source>
         <translation>
         Решить multiple traveling salesman problem (MTSP).
@@ -47,6 +49,8 @@
             Пункты назначения: Слой с пунктами назначения. Все точки должны быть достижимы по дорожной сети.
             Дорожная сеть: Слой с дорогами.
             Количество маршрутов: Число прокладываемых маршрутов.
+
+        &lt;a href=&quot;https://github.com/bkarpov/mtsp-routing-qgis/blob/main/README.ru.md&quot;&gt;Мануал&lt;/a&gt;
         </translation>
     </message>
 </context>

@@ -213,7 +213,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
                 polyline_points = [core.QgsPoint(point.x, point.y) for point in (edge.start, edge.finish)]
                 new_feature.setGeometry(core.QgsGeometry.fromPolyline(polyline_points))
                 new_feature.setAttributes(qgis_objects_attributes[edge] + [cluster_idx + 1, edge_idx + 1])
-                roads_res.addFeature(new_feature)
+                roads_res_data.addFeature(new_feature)
 
         # Добавить слои в проект
         layer_details = core.QgsProcessingContext.LayerDetails("", core.QgsProject.instance(), "")
@@ -227,13 +227,13 @@ class MtspRouting(core.QgsProcessingAlgorithm):
         return dest_res, roads_res
 
     def name(self) -> str:
-        return "build routes"
+        return "Build routes"
 
     def displayName(self) -> str:
         return self.tr(self.name())
 
     def groupId(self) -> str:
-        return "routing"
+        return "Routing"
 
     def group(self) -> str:
         return self.tr(self.groupId())
@@ -266,4 +266,6 @@ class MtspRouting(core.QgsProcessingAlgorithm):
             Destinations: Layer with destinations. All points must be reachable by roads.
             Road network: Layer with roads.
             Number of routes: Number of routes to build.
+            
+        <a href="https://github.com/bkarpov/mtsp-routing-qgis/blob/main/README.md">Manual</a>
         """)

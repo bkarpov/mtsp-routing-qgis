@@ -7,7 +7,7 @@ import sys
 
 from qgis import core
 
-from plugin.mtsp_provider import MtspRoutingProvider
+from mtsp_routing_qgis.mtsp_provider import MtspRoutingProvider
 
 __author__ = "Boris Karpov"
 __date__ = "2022-02-16"

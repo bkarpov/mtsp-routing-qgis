@@ -1,9 +1,10 @@
 # coding: utf-8
 """Класс обработчика, инициализирующий и выводящий алгоритмы в интерфейс"""
 
+from PyQt5 import QtGui
 from qgis import core
 
-from plugin.mtsp_algorithm import MtspRouting
+from mtsp_routing_qgis.mtsp_algorithm import MtspRouting
 
 __author__ = "Boris Karpov"
 __date__ = "2022-02-16"
@@ -28,11 +29,11 @@ class MtspRoutingProvider(core.QgsProcessingProvider):
     def id(self) -> str:
         return "MtspRouting"
 
-    def name(self):
+    def name(self) -> str:
         return "MTSP Routing"
 
-    def icon(self):
+    def icon(self) -> QtGui.QIcon:
         return core.QgsProcessingProvider.icon(self)
 
-    def longName(self):
+    def longName(self) -> str:
         return self.name()
