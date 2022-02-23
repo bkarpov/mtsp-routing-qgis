@@ -266,4 +266,6 @@ class MtspRouting(core.QgsProcessingAlgorithm):
             Destinations: Layer with destinations. All points must be reachable by roads.
             Road network: Layer with roads.
             Number of routes: Number of routes to build.
+            
+        <a href="https://github.com/bkarpov/mtsp-routing-qgis/blob/main/README.md">Manual</a>
         """)
