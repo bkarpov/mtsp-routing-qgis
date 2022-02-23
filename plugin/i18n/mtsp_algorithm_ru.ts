@@ -4,17 +4,17 @@
 <context>
     <name>MtspRouting</name>
     <message>
-        <location filename="../mtsp_algorithm.py" line="69"/>
+        <location filename="../mtsp_algorithm.py" line="50"/>
         <source>Destinations</source>
         <translation>Пункты назначения</translation>
     </message>
     <message>
-        <location filename="../mtsp_algorithm.py" line="77"/>
+        <location filename="../mtsp_algorithm.py" line="58"/>
         <source>Road network</source>
         <translation>Дорожная сеть</translation>
     </message>
     <message>
-        <location filename="../mtsp_algorithm.py" line="85"/>
+        <location filename="../mtsp_algorithm.py" line="66"/>
         <source>Number of routes</source>
         <translation>Количество маршрутов</translation>
     </message>
@@ -29,7 +29,7 @@
         <translation>Маршрутизация</translation>
     </message>
     <message>
-        <location filename="../mtsp_algorithm.py" line="220"/>
+        <location filename="../mtsp_algorithm.py" line="261"/>
         <source>
         Solve the multiple traveling salesman problem (MTSP).
         Divide the points into clusters of the same size and build routes in them.

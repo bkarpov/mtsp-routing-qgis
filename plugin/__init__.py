@@ -35,5 +35,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from .mtsp import MtspSolverPlugin
-    return MtspSolverPlugin()
+    from .mtsp import MtspRoutingPlugin
+    return MtspRoutingPlugin()
