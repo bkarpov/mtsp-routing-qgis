@@ -213,7 +213,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
                 polyline_points = [core.QgsPoint(point.x, point.y) for point in (edge.start, edge.finish)]
                 new_feature.setGeometry(core.QgsGeometry.fromPolyline(polyline_points))
                 new_feature.setAttributes(qgis_objects_attributes[edge] + [cluster_idx + 1, edge_idx + 1])
-                roads_res.addFeature(new_feature)
+                roads_res_data.addFeature(new_feature)
 
         # Добавить слои в проект
         layer_details = core.QgsProcessingContext.LayerDetails("", core.QgsProject.instance(), "")
