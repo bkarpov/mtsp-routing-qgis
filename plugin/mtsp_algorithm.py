@@ -227,13 +227,13 @@ class MtspRouting(core.QgsProcessingAlgorithm):
         return dest_res, roads_res
 
     def name(self) -> str:
-        return "build routes"
+        return "Build routes"
 
     def displayName(self) -> str:
         return self.tr(self.name())
 
     def groupId(self) -> str:
-        return "routing"
+        return "Routing"
 
     def group(self) -> str:
         return self.tr(self.groupId())
