@@ -211,7 +211,7 @@ class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
         return "Routing"
 
     def tr(self, string):
-        return QtCore.QCoreApplication.translate('Processing', string)
+        return QtCore.QCoreApplication.translate(self.__class__.__name__, string)
 
     def createInstance(self):
         return MtspSolverAlgorithm()
