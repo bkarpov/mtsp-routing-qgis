@@ -30,8 +30,7 @@ __copyright__ = '(C) 2022 by Борис Карпов'
 
 __revision__ = '$Format:%H$'
 
-from qgis.core import (QgsFeatureSink, QgsProcessing, QgsProcessingAlgorithm, QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFeatureSource)
+from qgis.core import (QgsFeatureSink, QgsProcessing, QgsProcessingAlgorithm, QgsProcessingParameterFeatureSource, QgsProcessingParameterNumber)
 from qgis.PyQt.QtCore import QCoreApplication
 
 
@@ -53,8 +52,9 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
-    OUTPUT = 'OUTPUT'
-    INPUT = 'INPUT'
+    DEST_LAYER = "DEST_LAYER"
+    ROADS_LAYER = "ROADS_LAYER"
+    NUMBER_OF_ROUTES = "NUMBER_OF_ROUTES"
 
     def initAlgorithm(self, config):
         """
@@ -66,19 +66,25 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         # geometry.
         self.addParameter(
             QgsProcessingParameterFeatureSource(
-                self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.DEST_LAYER,
+                self.tr("Destinations"),
+                [QgsProcessing.TypeVectorPoint]
             )
         )
 
-        # We add a feature sink in which to store our processed features (this
-        # usually takes the form of a newly created vector layer when the
-        # algorithm is run in QGIS).
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
-                self.tr('Output layer')
+            QgsProcessingParameterFeatureSource(
+                self.ROADS_LAYER,
+                self.tr("Roads"),
+                [QgsProcessing.TypeVectorLine]
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.NUMBER_OF_ROUTES,
+                self.tr("Number of routes"),
+                minValue=1,
             )
         )
 
@@ -126,7 +132,7 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'Построить маршруты'
+        return "Build routes"
 
     def displayName(self):
         """
@@ -150,10 +156,21 @@ class MtspSolverAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'Маршрутизация'
+        return "Routing"
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
         return MtspSolverAlgorithm()
+
+    def shortHelpString(self):
+        return self.tr("""
+        Solve the multiple traveling salesman problem (MTSP).
+        Divide the points into clusters of the same size and build routes in them.
+
+        Parameters:
+            Destinations: Layer with destinations. All points must be reachable by roads.
+            Roads: Layer with roads. It's strongly recommended to divide roads by roads before running the algorithm.
+            Number of routes: Number of routes to build.
+        """)
