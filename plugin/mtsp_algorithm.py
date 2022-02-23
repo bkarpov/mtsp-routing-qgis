@@ -29,6 +29,8 @@ __copyright__ = '(C) 2022 by Boris Karpov'
 
 __revision__ = '$Format:%H$'
 
+import os
+
 from qgis import core
 from qgis.PyQt import QtCore
 from routing import solution as sl
@@ -57,6 +59,20 @@ class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
     ROADS_LAYER = "ROADS_LAYER"
     NUMBER_OF_ROUTES = "NUMBER_OF_ROUTES"
     RESULT = "RESULT"
+
+    def __init__(self):
+        super(MtspRouting, self).__init__()
+
+        locale_path = os.path.join(
+            os.path.dirname(__file__),
+            "i18n",
+            f"{os.path.splitext(os.path.basename(__file__))[0]}_{QtCore.QSettings().value('locale/userLocale')[:2]}.qm"
+        )
+
+        if os.path.exists(locale_path):
+            self.translator = QtCore.QTranslator()
+            self.translator.load(locale_path)
+            QtCore.QCoreApplication.installTranslator(self.translator)
 
     def initAlgorithm(self, config):
         """
@@ -135,12 +151,12 @@ class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
             core.QgsField("number_in_route", QtCore.QVariant.Int)  # Порядковый номер внутри маршрута
         ]
 
-        clustered_destinations_layer = core.QgsVectorLayer("Point", self.tr("Ordered destinations"), "memory")
+        clustered_destinations_layer = core.QgsVectorLayer("Point", "destinations", "memory")
         clustered_destinations_data = clustered_destinations_layer.dataProvider()
         clustered_destinations_data.addAttributes(destinations_layer.dataProvider().fields().toList() + res_atts)
         clustered_destinations_layer.updateFields()
 
-        routes_layer = core.QgsVectorLayer("LineString", self.tr("Routes"), "memory")
+        routes_layer = core.QgsVectorLayer("LineString", "routes", "memory")
         routes_layer_data = routes_layer.dataProvider()
         routes_layer_data.addAttributes(roads_layer.dataProvider().fields().toList() + res_atts)
         routes_layer.updateFields()
@@ -211,7 +227,7 @@ class MtspSolverAlgorithm(core.QgsProcessingAlgorithm):
         return "Routing"
 
     def tr(self, string):
-        return QtCore.QCoreApplication.translate('Processing', string)
+        return QtCore.QCoreApplication.translate(self.__class__.__name__, string)
 
     def createInstance(self):
         return MtspSolverAlgorithm()
