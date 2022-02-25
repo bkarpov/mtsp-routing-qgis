@@ -4,9 +4,10 @@
 
 [general]
 name=MTSP Routing
-qgisMinimumVersion=3.0
+qgisMinimumVersion=3.10
+qgisMaximumVersion=3.99
 description=Solve the multiple traveling salesman problem (MTSP).
-version=1.0.0
+version=1.0.1
 author=Boris Karpov
 email=bkarpov96@ya.ru
 
@@ -20,7 +21,9 @@ repository=https://github.com/bkarpov/mtsp-routing-qgis
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog=
+    1.0.1 - Release tested on Windows
+    1.0.0 - Release tested on Linux
 
 # Tags are comma separated with spaces allowed
 tags=routing,navigation,street network,processing,vector,openstreetmap,osm,python,qgis3
