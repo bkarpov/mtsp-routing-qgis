@@ -7,11 +7,12 @@ name=MTSP Routing
 qgisMinimumVersion=3.10
 qgisMaximumVersion=3.99
 description=Solve the multiple traveling salesman problem (MTSP).
-version=1.0.1
+version=1.1.0
 author=Boris Karpov
 email=bkarpov96@ya.ru
 
-about=Divide the points into clusters of the same size and build routes in them. Installation of the Python package "mtsp-routing" is required.
+about=Divide the points into clusters of the same size and build routes in them.
+    Installation of the Python package mtsp-routing>=1.1.0 is required.
 
 tracker=https://github.com/bkarpov/mtsp-routing-qgis/issues
 repository=https://github.com/bkarpov/mtsp-routing-qgis
@@ -22,11 +23,12 @@ repository=https://github.com/bkarpov/mtsp-routing-qgis
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
 changelog=
-    1.0.1 - Release tested on Windows
-    1.0.0 - Release tested on Linux
+    1.1.0 - Added a selector for the number of created processes, fixed displaying terminal windows in Windows
+    1.0.1 - Release tested in Windows
+    1.0.0 - Release tested in Linux
 
 # Tags are comma separated with spaces allowed
-tags=routing,navigation,street network,processing,vector,openstreetmap,osm,python,qgis3
+tags=routing,street network,transport
 
 homepage=https://github.com/bkarpov/mtsp-routing-qgis
 category=Analysis
