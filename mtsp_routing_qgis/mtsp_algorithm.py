@@ -24,6 +24,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
     DEST_LAYER = "DEST_LAYER"
     ROADS_LAYER = "ROADS_LAYER"
     NUMBER_OF_ROUTES = "NUMBER_OF_ROUTES"
+    NUMBER_OF_PROCESSES = "NUMBER_OF_PROCESSES"
     RESULT = "RESULT"
 
     def __init__(self) -> None:
@@ -71,6 +72,16 @@ class MtspRouting(core.QgsProcessingAlgorithm):
             )
         )
 
+        self.addParameter(
+            core.QgsProcessingParameterNumber(
+                self.NUMBER_OF_PROCESSES,
+                self.tr("Number of processes"),
+                defaultValue=os.cpu_count(),
+                minValue=1,
+                maxValue=os.cpu_count(),
+            )
+        )
+
     def processAlgorithm(
             self,
             parameters: dict[str, Any],
@@ -98,9 +109,10 @@ class MtspRouting(core.QgsProcessingAlgorithm):
 
         # Подготовить входные данные
         number_of_routes = self.parameterAsInt(parameters, self.NUMBER_OF_ROUTES, context)
+        number_of_processes = self.parameterAsInt(parameters, self.NUMBER_OF_PROCESSES, context)
         points, graph, qgis_objects_attributes = self._prepare_data(parameters, context)
 
-        results = sl.build_routes(points, number_of_routes, graph)  # Подсчитать результат
+        results = sl.build_routes(points, number_of_routes, graph, number_of_processes)  # Подсчитать результат
 
         # Сохранить результат
         dest_layer, routes_layer = self._save_result(parameters, context, qgis_objects_attributes, results)
@@ -127,7 +139,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
         roads_layer = self.parameterAsLayer(parameters, self.ROADS_LAYER, context)
 
         # Преобразовать данные для использования в алгоритмах mtsp-routing-core
-        points = []
+        points = set()
 
         qgis_objects_attributes = {}  # Атрибуты исходных объектов
         # Атрибуты вынесены в словарь, тк они содержат Qgis объекты, несовместимые с multiprocessing
@@ -136,7 +148,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
             geom = feature.geometry().asPoint()
             point = sp.Point(geom[0], geom[1])
             qgis_objects_attributes[point] = feature.attributes()
-            points.append(point)
+            points.add(point)
 
         graph = sp.Graph()
 
@@ -152,7 +164,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
                 qgis_objects_attributes[edge] = feature.attributes()
                 graph.add_edge(edge)
 
-        return points, graph, qgis_objects_attributes
+        return list(points), graph, qgis_objects_attributes
 
     def _save_result(
             self,
@@ -181,8 +193,8 @@ class MtspRouting(core.QgsProcessingAlgorithm):
 
         # Создать новые слои с дополнительными атрибутами
         res_atts = [
-            core.QgsField("route_id", QtCore.QVariant.Int),  # Номер маршрута
-            core.QgsField("number_in_route", QtCore.QVariant.Int),  # Порядковый номер внутри маршрута
+            core.QgsField("route_num", QtCore.QVariant.Int),  # Номер маршрута
+            core.QgsField("serial_num", QtCore.QVariant.Int),  # Порядковый номер внутри маршрута
         ]
 
         def create_layer(geom_type: str, name: str, source_layer: core.QgsVectorLayer) -> tuple:
@@ -266,6 +278,9 @@ class MtspRouting(core.QgsProcessingAlgorithm):
             Destinations: Layer with destinations. All points must be reachable by roads.
             Road network: Layer with roads.
             Number of routes: Number of routes to build.
-            
+            Number of processes: Number of processes for parallel route building.
+                The maximum number of processes is equal to the number of logical processors.
+                The more processes are used, the faster routes are built.
+
         <a href="https://github.com/bkarpov/mtsp-routing-qgis/blob/main/README.md">Manual</a>
         """)
