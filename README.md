@@ -8,13 +8,15 @@ Calculations are performed by the mtsp-routing-core package
 ([GitHub](https://github.com/bkarpov/mtsp-routing-core),
 [PyPI](https://pypi.org/project/mtsp-routing/)), which is not tied to any GIS.
 
+![Example of the result](docs/images/en/result.png)
+
 ---
 
 ## Installation
 
-### I. Installing the Python package mtsp-routing
+### I. Installing the latest version of the Python package mtsp-routing
 
-The package is needed to perform calculations, without it the QGIS plugin will not be able to work. 
+The package is needed to perform calculations, without it the QGIS plugin will not be able to work.
 
 #### Installing in QGIS
 1. Open the Python Console
@@ -61,12 +63,12 @@ Plugins / Manage and Install Plugins
 ![Starting building routes](docs/images/en/run_algorithm.png)
 
 ### 3. Configure the display of the result
-   1. Classify destinations by the route_id attribute
+   1. Classify destinations by the route_num attribute
 ![Configuring styles for the destination layer](docs/images/en/output_settings_1.png)
-   2. Add labels to destinations
-![Adding labels to destinations](docs/images/en/output_settings_2.png)
-   3. Classify used roads by the route_id attribute
-![Configuring styles for a layer with used roads](docs/images/en/output_settings_3.png)
-   4. Add signatures to used road sections
+   2. Classify used roads by the route_num attribute
+![Configuring styles for a layer with used roads](docs/images/en/output_settings_2.png)
+   3. Add labels to destinations
+![Adding labels to destinations](docs/images/en/output_settings_3.png)
+   4. Add labels showing the order of road traversal
       1. To prevent signatures from merging into 1 number, use an expression with the addition of a separator 
 ![Adding labels to roads](docs/images/en/output_settings_4.png)

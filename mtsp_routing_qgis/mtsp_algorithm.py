@@ -139,7 +139,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
         roads_layer = self.parameterAsLayer(parameters, self.ROADS_LAYER, context)
 
         # Преобразовать данные для использования в алгоритмах mtsp-routing-core
-        points = []
+        points = set()
 
         qgis_objects_attributes = {}  # Атрибуты исходных объектов
         # Атрибуты вынесены в словарь, тк они содержат Qgis объекты, несовместимые с multiprocessing
@@ -148,7 +148,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
             geom = feature.geometry().asPoint()
             point = sp.Point(geom[0], geom[1])
             qgis_objects_attributes[point] = feature.attributes()
-            points.append(point)
+            points.add(point)
 
         graph = sp.Graph()
 
@@ -164,7 +164,7 @@ class MtspRouting(core.QgsProcessingAlgorithm):
                 qgis_objects_attributes[edge] = feature.attributes()
                 graph.add_edge(edge)
 
-        return points, graph, qgis_objects_attributes
+        return list(points), graph, qgis_objects_attributes
 
     def _save_result(
             self,
@@ -193,8 +193,8 @@ class MtspRouting(core.QgsProcessingAlgorithm):
 
         # Создать новые слои с дополнительными атрибутами
         res_atts = [
-            core.QgsField("route_id", QtCore.QVariant.Int),  # Номер маршрута
-            core.QgsField("number_in_route", QtCore.QVariant.Int),  # Порядковый номер внутри маршрута
+            core.QgsField("route_num", QtCore.QVariant.Int),  # Номер маршрута
+            core.QgsField("serial_num", QtCore.QVariant.Int),  # Порядковый номер внутри маршрута
         ]
 
         def create_layer(geom_type: str, name: str, source_layer: core.QgsVectorLayer) -> tuple:
