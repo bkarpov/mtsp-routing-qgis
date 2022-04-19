@@ -193,8 +193,8 @@ class MtspRouting(core.QgsProcessingAlgorithm):
 
         # Создать новые слои с дополнительными атрибутами
         res_atts = [
-            core.QgsField("route_id", QtCore.QVariant.Int),  # Номер маршрута
-            core.QgsField("number_in_route", QtCore.QVariant.Int),  # Порядковый номер внутри маршрута
+            core.QgsField("route_num", QtCore.QVariant.Int),  # Номер маршрута
+            core.QgsField("serial_num", QtCore.QVariant.Int),  # Порядковый номер внутри маршрута
         ]
 
         def create_layer(geom_type: str, name: str, source_layer: core.QgsVectorLayer) -> tuple:
